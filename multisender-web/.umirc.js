@@ -2,4 +2,5 @@
 export default {
   antd: {},
   title: 'MultiSender@Wanchain',
+  favicon: 'favicon.png'
 }
