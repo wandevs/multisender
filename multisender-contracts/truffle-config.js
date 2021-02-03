@@ -25,7 +25,7 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 const WanProvider = require('wanchain-truffle-sdk').WanProvider;
-const wanProvider = new HDWalletProvider("", "http://192.168.1.2:20001");
+const wanProvider = new WanProvider("", "http://192.168.1.2:20001");
 
 module.exports = {
   /**

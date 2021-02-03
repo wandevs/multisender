@@ -25,9 +25,12 @@ This Dapp allows a user to send thousands of token transfers in a very effecient
 You can test this tool on any test network, if you want to make sure that
 everything will work as expected.
 
-Contracts deployed:  
-Mainnet, Testnet
-SC Addr: 0xa5025faba6e70b84f74e9b1113e5f7f4e7f4859f  
+Contracts deployed wanchain:
+```
+testnet:  0xf82FAcD9C905abc3484fc2165c7538C50EF1629d
+mainnet:  0xf82FAcD9C905abc3484fc2165c7538C50EF1629d
+```
+ 
 
 Example JSON:
 ```json

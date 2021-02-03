@@ -1,10 +1,9 @@
-To flatten:
-1.
+# multisender
+
+Deployed wanchain:
+
 ```
-npm install
-```
-2.
-```
- ./node_modules/.bin/truffle-flattener contracts/EternalStorageProxyForStormMultisender.sol > flats/EternalStorageProxyForStormMultisender_flat.sol
- ./node_modules/.bin/truffle-flattener contracts/multisender/UpgradebleStormSender.sol > flats/UpgradebleStormSender_flat.sol
+testnet:  0xf82FAcD9C905abc3484fc2165c7538C50EF1629d
+mainnet:  0xf82FAcD9C905abc3484fc2165c7538C50EF1629d
+
 ```
