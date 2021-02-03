@@ -1,0 +1,20 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "flatten": "truffle-flattener UpgradebleStormSender.sol > flats/UpgradebleStormSender_flat.sol"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "truffle": "^5.1.64",
+    "wanchain-truffle-sdk": "^1.0.0",
+    "web3-provider-engine": "^16.0.1"
+  },
+  "devDependencies": {
+    "truffle-flattener": "^1.2.3"
+  }
+}
