@@ -29,7 +29,6 @@ class Wallet extends React.Component {
     };
 
     this.setWallet = props.setWallet;
-    this.wallet = props.wallet;
     this.setWallet(intiState);
 
     if (typeof window === 'undefined') {
@@ -87,16 +86,16 @@ class Wallet extends React.Component {
     }
     provider.on("close", () => this.resetApp());
     provider.on("accountsChanged", async (accounts) => {
-      await this.setWallet({ ...this.wallet, address: accounts[0] });
+      await this.setWallet({ ...this.props.wallet, address: accounts[0] });
     });
     provider.on("chainChanged", async () => {
       const { web3 } = this.props.wallet;
       const networkId = await web3.eth.net.getId();
-      await this.setWallet({ ...this.wallet, networkId });
+      await this.setWallet({ ...this.props.wallet, networkId });
     });
 
     provider.on("networkChanged", async (networkId) => {
-      await this.setWallet({ ...this.wallet, networkId });
+      await this.setWallet({ ...this.props.wallet, networkId });
     });
   };
 

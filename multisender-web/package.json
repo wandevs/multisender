@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
+    "@makerdao/multicall": "^0.12.0",
     "@umijs/preset-react": "^1.7.13",
     "@wandevs/web3modal": "^1.10.4",
     "@web3-react-wan/wanwallet-connector": "^6.1.17",
     "antd": "^4.12.0",
+    "bignumber.js": "^9.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "styled-components": "^5.2.1",

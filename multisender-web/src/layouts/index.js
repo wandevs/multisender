@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Wallet from '../pages/components/Wallet';
-import { Input, AutoComplete, InputNumber, Button, Radio } from 'antd';
+import { Input, AutoComplete, InputNumber, Button } from 'antd';
 import { GithubOutlined } from '@ant-design/icons';
-
+import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress } from '../utils';
+const BigNumber = require('bignumber.js');
 
 const { TextArea } = Input;
 
@@ -13,6 +14,49 @@ function BasicLayout(props) {
   const [balance, setBalance] = useState(0);
   const [symbol, setSymbol] = useState('WAN');
   const [totalSend, setTotalSend] = useState(0);
+  const [txCount, setTxCount] = useState(0);
+  const [tokenOptions, setTokenOptions] = useState([]);
+  const [tokenAddress, setTokenAddress] = useState('');
+  const [decimals, setDecimals] = useState(18);
+  const [tokensInfo, setTokensInfo] = useState();
+
+  useEffect(()=>{
+    const func = async ()=>{
+      let ret;
+      if (isAddress(tokenAddress)) {
+        ret = await getTokenInfo([...tokenAddresses, tokenAddress], wallet.chainId, wallet.address);
+      } else {
+        ret = await getTokenInfo([...tokenAddresses], wallet.networkId, wallet.address);
+      }
+
+      if (!ret || ret.length === 0) {
+        return;
+      }
+
+      
+
+      console.log('tokens', ret);
+      setTokensInfo(ret);
+
+      let options = tokenAddresses.map(v=>{
+        if (v === WAN_TOKEN_ADDRESS) {
+          return {
+            label: 'WAN' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18))  + ') ' + v,
+            value: v
+          };
+        } else {
+          return {
+            label: ret[v].symbol + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(10 ** ret[v].decimals))  + ') ' + v,
+            value: v
+          };
+        }
+      });
+
+      setTokenOptions(options);
+    }
+    func();
+  }, [wallet, tokenAddress]);
+
   console.log('wallet', wallet);
   return (
     <Background>
@@ -26,6 +70,9 @@ function BasicLayout(props) {
         <GitHub onClick={()=>{
           window.open("https://github.com/wandevs/multisender")
         }}>
+          {
+            Number(wallet.networkId) === 3 && "Testnet"
+          }
           <GithubOutlined/>
         </GitHub>
       </Head>
@@ -35,14 +82,31 @@ function BasicLayout(props) {
         <Text>Input or select token address:</Text>
         <span>
         <SAutoComplete
+          value={tokenAddress}
+          onChange={(e)=>{
+            setTokenAddress(e);
+            if (isAddress(e)) {
+              if (tokensInfo && tokensInfo[e]) {
+                if (e === WAN_TOKEN_ADDRESS) {
+                  setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
+                  setDecimals(18);
+                  setSymbol('WAN');
+                } else {
+                  setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
+                  setDecimals(tokensInfo[e].decimals);
+                  setSymbol(tokensInfo[e].symbol);
+                }
+              }
+            }
+          }}
           allowClear
           autoFocus
-          options={[{ label:'Haha', value: 'text 1' }, { value: 'text 2' }]} />
+          options={tokenOptions} />
         </span>
         <DecimalBox>
         Decimals:
         </DecimalBox>
-        <span><InputNumber defaultValue={18}/></span>
+        <span><InputNumber value={decimals} readOnly/></span>
         <Text>Input receiver in CSV format:</Text>
         <STextArea rows={14} placeholder={
           `
@@ -51,7 +115,7 @@ function BasicLayout(props) {
           0xd409bc9f0Acc5A4c8a86FebB2d99BB87EF7E268d,0.5
           `
         }/>
-        <Text>Wallet Balance: {balance + ' ' + symbol}, Total send: {totalSend + ' ' + symbol}</Text>
+        <Text>Wallet Balance: {balance + ' ' + symbol}, Total send: {totalSend + ' ' + symbol}, Need tx count: {txCount} </Text>
         <ButtonLine>
           <Button type="primary" style={{marginRight: "20px"}}>Approve</Button>
           <Button type="primary">Start Send</Button>
