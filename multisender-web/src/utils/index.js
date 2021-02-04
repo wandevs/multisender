@@ -134,7 +134,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
   setProgress(0);
 
   if (tokenAddress !== WAN_TOKEN_ADDRESS) {
-    waitArray.push(approve(MULTISENDER_SC_ADDR, tokenAddress, payAmount, from, web3));
+    waitArray.push(await approve(MULTISENDER_SC_ADDR, tokenAddress, payAmount, from, web3));
   }
 
   const sc = new web3.eth.Contract(abi, MULTISENDER_SC_ADDR);
