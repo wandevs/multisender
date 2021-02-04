@@ -1,7 +1,7 @@
 const { aggregate } = require('@makerdao/multicall');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
-const abi = require('../../../multisender-contracts/build/contracts/UpgradebleStormSender.json').abi;
+const abi = require('../assets/UpgradebleStormSender.json').abi;
 
 const MULTI_CALL_ADDR = {
   '1': '0xBa5934Ab3056fcA1Fa458D30FBB3810c3eb5145f',
