@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Wallet from '../pages/components/Wallet';
-import { Input, AutoComplete, InputNumber, Button } from 'antd';
-import { GithubOutlined } from '@ant-design/icons';
-import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress } from '../utils';
+import { Input, AutoComplete, InputNumber, Button, notification } from 'antd';
+import { GithubOutlined, SendOutlined } from '@ant-design/icons';
+import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress, multisend } from '../utils';
 const BigNumber = require('bignumber.js');
 
 const { TextArea } = Input;
 
 function BasicLayout(props) {
   const [wallet, setWallet] = useState({});
-  const [type, setType] = useState('CSV');
   const [balance, setBalance] = useState(0);
   const [symbol, setSymbol] = useState('WAN');
   const [totalSend, setTotalSend] = useState('0');
@@ -22,6 +21,7 @@ function BasicLayout(props) {
   const [inputText, setInputText] = useState('');
   const [receivers, setReceivers] = useState([]);
   const [amounts, setAmounts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const func = async () => {
@@ -62,13 +62,13 @@ function BasicLayout(props) {
     func();
   }, [wallet, tokenAddress]);
 
-  useEffect(()=>{
+  useEffect(() => {
     let lines = inputText.split('\n');
     let tmpTotal = new BigNumber(0);
     let _receivers = [];
     let _amounts = [];
     if (lines.length > 0) {
-      for (let i=0; i<lines.length; i++) {
+      for (let i = 0; i < lines.length; i++) {
         if (lines[i].split(',').length === 2 && isAddress(lines[i].split(',')[0]) && !isNaN(lines[i].split(',')[1])) {
           tmpTotal = tmpTotal.plus(new BigNumber(lines[i].split(',')[1]));
           _receivers.push(lines[i].split(',')[0].toLowerCase());
@@ -81,6 +81,7 @@ function BasicLayout(props) {
       setTotalSend(tmpTotal.toString());
       setReceivers(_receivers);
       setAmounts(_amounts);
+      setTxCount(Math.ceil(_receivers.length / 200));
     }
   }, [inputText]);
 
@@ -147,23 +148,86 @@ function BasicLayout(props) {
         </DecimalBox>
         <span><InputNumber value={decimals} readOnly /></span>
         <Text>Input or upload receive addresses in CSV format:</Text>
-        <input type="file" id="input" style={{marginLeft: "10px"}} onChange={(e)=>{
+        <input type="file" id="input" style={{ marginLeft: "10px" }} onChange={(e) => {
           let value = e.target.value;
           let files = e.target.files;
           setTimeout(() => { onUploadCheck(value, files) }, 1000);
-        }}/>
+        }} />
         <STextArea rows={12} placeholder={
           `
+          You can past CSV string here, such as below:
+
           0x4cF0a877e906deAd748a41Ae7da8C220e4247d9E,1.01
           0x5560Af0f46d00fcEa88627A9df7a4798B1B10961,2000
           0xd409bc9f0Acc5A4c8a86FebB2d99BB87EF7E268d,0.5
           `
-        } value={inputText} onChange={(e)=>{
+        } value={inputText} onChange={(e) => {
           setInputText(e.target.value);
-        }}/>
+        }} />
         <Text>Your balance: {balance + ' ' + symbol}, Total send: {totalSend + ' ' + symbol}, Need tx count: {txCount} </Text>
         <ButtonLine>
-          <Button type="primary">Start Send</Button>
+          <Button type="primary" loading={loading} icon={<SendOutlined />} disabled={txCount === 0} onClick={() => {
+            if (!isAddress(tokenAddress)) {
+              notification.open({ message: "Please fill token address" });
+              return;
+            }
+
+            if (tokenAddress === WAN_TOKEN_ADDRESS) {
+              if ((new BigNumber(totalSend)).gt((new BigNumber(balance.split(',').join(''))).plus(0.1))) {
+                notification.open({ message: "Balance not enough" });
+                return;
+              }
+            } else {
+              if ((new BigNumber(totalSend)).gt(new BigNumber(balance.split(',').join('')))) {
+                notification.open({ message: "Balance not enough" });
+                return;
+              }
+
+              if (!(new BigNumber(tokensInfo[WAN_TOKEN_ADDRESS].balance)).div(1e18).gt(new BigNumber(0.01))) {
+                notification.open({ message: "Gas fee not enough" });
+                return;
+              }
+            }
+
+            setLoading(true);
+            let key = Date.now();
+            let args = {
+              message: 'Waiting for transaction confirm...',
+              duration: 0,
+              key,
+            };
+            notification.open(args);
+            multisend(wallet.networkId, wallet.address, wallet.web3, tokenAddress, decimals, receivers, amounts, new BigNumber(totalSend)).then(ret => {
+              console.log('multisend ret', ret);
+              if (ret.success) {
+                args = {
+                  message: 'Transactions sent success',
+                  description: JSON.stringify(ret.data, null, 2),
+                  duration: 0,
+                  key,
+                };
+                notification.open(args);
+              } else {
+                args = {
+                  message: 'Transactions sent failed',
+                  description: JSON.stringify(ret.data, null, 2),
+                  duration: 0,
+                  key,
+                };
+                notification.open(args);
+              }
+              setLoading(false);
+            }).catch(err => {
+              args = {
+                message: 'Transactions sent failed',
+                description: err.toString(),
+                key,
+                duration: 0,
+              };
+              notification.open(args);
+              setLoading(false);
+            });
+          }}>Start Send</Button>
         </ButtonLine>
       </Body>
     </Background>

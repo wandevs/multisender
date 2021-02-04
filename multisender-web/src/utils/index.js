@@ -1,13 +1,14 @@
 const { aggregate } = require('@makerdao/multicall');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
+const abi = require('../../../multisender-contracts/build/contracts/UpgradebleStormSender.json').abi;
 
 const MULTI_CALL_ADDR = {
   '1': '0xBa5934Ab3056fcA1Fa458D30FBB3810c3eb5145f',
   '3': '0x14095a721Dddb892D6350a777c75396D634A7d97',
 }
 
-const RPC_URL = { 
+const RPC_URL = {
   '1': 'https://gwan-ssl.wandevs.org:56891',
   '3': 'https://gwan-ssl.wandevs.org:46891',
 }
@@ -52,49 +53,49 @@ export const getTokenInfo = async (tokens, chainId, account) => {
   }
 
   // balance
-  let calls = tokens.map(v=>{
+  let calls = tokens.map(v => {
     if (v === WAN_TOKEN_ADDRESS) {
       return {
         call: ['getEthBalance(address)(uint256)', account],
-        returns: [[v+'_balance', val => val.toString()]]
+        returns: [[v + '_balance', val => val.toString()]]
       }
     } else {
       return {
         target: v,
         call: ['balanceOf(address)(uint256)', account],
-        returns: [[v+'_balance', val => val.toString()]]
+        returns: [[v + '_balance', val => val.toString()]]
       }
     }
   });
 
   // symbol
-  calls = calls.concat(tokens.map(v=>{
+  calls = calls.concat(tokens.map(v => {
     return v !== WAN_TOKEN_ADDRESS && {
       target: v,
       call: ['symbol()(string)'],
-      returns: [[v+'_symbol', val => val]]
+      returns: [[v + '_symbol', val => val]]
     }
   }))
 
   // decimals
-  calls = calls.concat(tokens.map(v=>{
+  calls = calls.concat(tokens.map(v => {
     return v !== WAN_TOKEN_ADDRESS && {
       target: v,
       call: ['decimals()(uint8)'],
-      returns: [[v+'_decimals', val => val]]
+      returns: [[v + '_decimals', val => val]]
     }
   }))
 
   // allownce
-  calls = calls.concat(tokens.map(v=>{
+  calls = calls.concat(tokens.map(v => {
     return v !== WAN_TOKEN_ADDRESS && {
       target: v,
       call: ['allowance(address,address)(uint256)', account, MULTISENDER_SC_ADDR],
-      returns: [[v+'_allowance', val => val.toString()]]
+      returns: [[v + '_allowance', val => val.toString()]]
     }
   }))
 
-  calls = calls.filter(v=>{
+  calls = calls.filter(v => {
     return v !== false
   });
 
@@ -104,7 +105,7 @@ export const getTokenInfo = async (tokens, chainId, account) => {
     let ret = await aggregate(calls, config);
     console.log('aggregate return', ret);
     let storage = {};
-  
+
     for (const key in ret.results.transformed) {
       let keys = key.split('_');
       switch (keys.length) {
@@ -123,6 +124,132 @@ export const getTokenInfo = async (tokens, chainId, account) => {
     console.log('error', err);
   }
 }
+
+export const multisend = async (chainId, from, web3, tokenAddress, decimals, receivers, amounts, totalAmount) => {
+  console.debug('multisend input', chainId, from, web3, tokenAddress, receivers, amounts, totalAmount);
+  if (!from || !web3 || !chainId || !tokenAddress || !receivers || !amounts || !totalAmount) {
+    return { success: false, data: 'Params error' };
+  }
+
+  let value = 0;
+  let waitArray = [];
+
+  let payAmount = '0x' + (new BigNumber(totalAmount.multipliedBy(10 ** decimals).toFixed(0))).toString(16);
+
+  if (tokenAddress !== WAN_TOKEN_ADDRESS) {
+    waitArray.push(approve(MULTISENDER_SC_ADDR, tokenAddress, payAmount, from, web3));
+  } else {
+    value = payAmount;
+  }
+
+  const sc = new web3.eth.Contract(abi, MULTISENDER_SC_ADDR);
+  console.debug('multisend', payAmount, MULTISENDER_SC_ADDR);
+
+
+  for (let i = 0; i < Math.ceil(receivers.length / 200); i++) {
+    let subRecivers = receivers.slice(i * 200, (i + 1) * 200);
+    let subAmounts = amounts.slice(i * 200, (i + 1) * 200);
+    subAmounts = subAmounts.map(v => {
+      return '0x' + (new BigNumber(v).multipliedBy(10 ** decimals)).toString(16);
+    });
+
+    let gas = 21000 + 50000 * subRecivers.length;
+    if (gas > 1e7) {
+      gas = 1e7;
+    }
+
+    console.debug('gas new', gas);
+
+    let data = await sc.methods.multisendToken(tokenAddress, subRecivers, subAmounts).encodeABI();
+  
+    const params = {
+      to: MULTISENDER_SC_ADDR,
+      data,
+      value,
+      gasPrice: "0x2540BE400",
+      from
+    };
+  
+    if (!window.injectWeb3) {
+      params.gas = '0x' + gas.toString(16);
+      params.gasPrice = undefined;
+    } else {
+      params.gasLimit = '0xF4240';
+    }
+  
+    waitArray.push(web3.eth.sendTransaction(params));
+  }
+
+  let txID = await Promise.all(waitArray);
+
+  txID = txID.map(v=>{
+    if (v.transactionHash) {
+      return {
+        txHash: v.transactionHash,
+        status: v.status
+      };
+    } else {
+      return v;
+    }
+  });
+
+  return { success: true, data: txID };
+}
+
+const approve = async (scAddr, tokenAddr, amount, owner, web3) => {
+  console.debug('approve called', amount);
+  if (!tokenAddr || !web3) {
+    return { success: false, data: "approve input params error" };
+  }
+  if (tokenAddr !== '0x0000000000000000000000000000000000000000') {
+    const abi = [{ "constant": false, "inputs": [{ "name": "_spender", "type": "address" }, { "name": "_value", "type": "uint256" }], "name": "approve", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "_owner", "type": "address" }, { "name": "_spender", "type": "address" }], "name": "allowance", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }];
+    let token = new web3.eth.Contract(abi, tokenAddr);
+
+    let allowance = await token.methods.allowance(owner, scAddr).call();
+    allowance = new BigNumber(allowance);
+
+    if (allowance.toString() !== '0' && amount.toString() !== '0') {
+      if (allowance.gte(new BigNumber(amount))) {
+        return { success: true };
+      }
+
+      let ret = await approve(scAddr, tokenAddr, 0, owner, web3);
+      if (!ret || !ret.status) {
+        return { success: false, data: 'approve 0 failed' };
+      }
+    }
+
+    let data;
+    if (amount.toString() === '0') {
+      data = await token.methods.approve(scAddr, '0x0').encodeABI();
+    } else {
+      data = await token.methods.approve(scAddr, '0xf000000000000000000000000000000000000000000000000000000000000000').encodeABI();
+    }
+
+    const params = {
+      to: tokenAddr,
+      data,
+      value: 0,
+      gasPrice: "0x2540BE400",
+      from: owner
+    };
+
+    if (!window.injectWeb3) {
+      params.gas = '0x' + web3.utils.toBN(200000).toString('hex');
+      params.gasPrice = undefined;
+    } else {
+      params.gasLimit = '0xF4240';
+    }
+
+    let txID = await web3.eth.sendTransaction(params);
+    if (!txID || !txID.status) {
+      return { success: false, data: 'Approve failed:' + txID.transactionHash };
+    }
+    return { success: true, data: txID.transactionHash };
+  }
+  return { success: true };
+}
+
 
 export function commafy(num) {
   if (!num) {
@@ -148,12 +275,12 @@ export function commafy(num) {
 
 export const isAddress = function (address) {
   if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-      // check if it has the basic requirements of an address
-      return false;
+    // check if it has the basic requirements of an address
+    return false;
   } else if (/^(0x)?[0-9a-f]{40}$/.test(address.toLowerCase())) {
-      // If it's all small caps or all all caps, return true
-      return true;
-  } 
+    // If it's all small caps or all all caps, return true
+    return true;
+  }
 
   return false;
 }
