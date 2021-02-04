@@ -47,7 +47,6 @@ export const getTokenInfo = async (tokens, chainId, account) => {
     rpcUrl: RPC_URL[chainId],
     multicallAddress: MULTI_CALL_ADDR[chainId],
   }
-  console.log('getTokenInfo', tokens, chainId, account);
   if (!tokens || tokens.length === 0 || !chainId || !account) {
     return;
   }
@@ -99,11 +98,8 @@ export const getTokenInfo = async (tokens, chainId, account) => {
     return v !== false
   });
 
-  console.log('aggregate', calls, config);
-
   try {
     let ret = await aggregate(calls, config);
-    console.log('aggregate return', ret);
     let storage = {};
 
     for (const key in ret.results.transformed) {
@@ -125,21 +121,20 @@ export const getTokenInfo = async (tokens, chainId, account) => {
   }
 }
 
-export const multisend = async (chainId, from, web3, tokenAddress, decimals, receivers, amounts, totalAmount) => {
+export const multisend = async (chainId, from, web3, tokenAddress, decimals, receivers, amounts, totalAmount, setProgress) => {
   console.debug('multisend input', chainId, from, web3, tokenAddress, receivers, amounts, totalAmount);
   if (!from || !web3 || !chainId || !tokenAddress || !receivers || !amounts || !totalAmount) {
     return { success: false, data: 'Params error' };
   }
 
-  let value = 0;
   let waitArray = [];
 
   let payAmount = '0x' + (new BigNumber(totalAmount.multipliedBy(10 ** decimals).toFixed(0))).toString(16);
 
+  setProgress(0);
+
   if (tokenAddress !== WAN_TOKEN_ADDRESS) {
     waitArray.push(approve(MULTISENDER_SC_ADDR, tokenAddress, payAmount, from, web3));
-  } else {
-    value = payAmount;
   }
 
   const sc = new web3.eth.Contract(abi, MULTISENDER_SC_ADDR);
@@ -153,19 +148,24 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
       return '0x' + (new BigNumber(v).multipliedBy(10 ** decimals)).toString(16);
     });
 
-    let gas = 21000 + 50000 * subRecivers.length;
-    if (gas > 1e7) {
-      gas = 1e7;
+    let value = new BigNumber(0);
+    if (tokenAddress === WAN_TOKEN_ADDRESS) {
+      subAmounts.forEach(v=>{
+        value = value.plus(new BigNumber(v));
+      })
     }
 
-    console.debug('gas new', gas);
+    let gas = 21000 + 50000 * subRecivers.length;
+    if (gas > 8e6) {
+      gas = 8e6;
+    }
 
     let data = await sc.methods.multisendToken(tokenAddress, subRecivers, subAmounts).encodeABI();
   
     const params = {
       to: MULTISENDER_SC_ADDR,
       data,
-      value,
+      value: '0x' + value.toString(16),
       gasPrice: "0x2540BE400",
       from
     };
@@ -178,6 +178,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
     }
   
     waitArray.push(web3.eth.sendTransaction(params));
+    setProgress(((i + 1) * 100 /Math.ceil(receivers.length / 200)).toFixed(0));
   }
 
   let txID = await Promise.all(waitArray);

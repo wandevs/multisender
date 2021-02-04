@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Wallet from '../pages/components/Wallet';
-import { Input, AutoComplete, InputNumber, Button, notification } from 'antd';
+import { Input, AutoComplete, InputNumber, Button, notification, Progress } from 'antd';
 import { GithubOutlined, SendOutlined } from '@ant-design/icons';
 import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress, multisend } from '../utils';
 const BigNumber = require('bignumber.js');
@@ -22,6 +22,7 @@ function BasicLayout(props) {
   const [receivers, setReceivers] = useState([]);
   const [amounts, setAmounts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState();
 
   useEffect(() => {
     const func = async () => {
@@ -75,8 +76,6 @@ function BasicLayout(props) {
           _amounts.push(new BigNumber(lines[i].split(',')[1]));
         }
       }
-      console.log('_receivers', _receivers);
-      console.log('_amounts', _amounts);
 
       setTotalSend(tmpTotal.toString());
       setReceivers(_receivers);
@@ -164,7 +163,7 @@ function BasicLayout(props) {
         } value={inputText} onChange={(e) => {
           setInputText(e.target.value);
         }} />
-        <Text>Your balance: {balance + ' ' + symbol}, Total send: {totalSend + ' ' + symbol}, Need tx count: {txCount} </Text>
+        <Text>Your balance: {balance + ' ' + symbol}, Address count: {receivers.length}, Total send: {totalSend + ' ' + symbol}, Need tx count: {txCount} </Text>
         <ButtonLine>
           <Button type="primary" loading={loading} icon={<SendOutlined />} disabled={txCount === 0} onClick={() => {
             if (!isAddress(tokenAddress)) {
@@ -197,8 +196,7 @@ function BasicLayout(props) {
               key,
             };
             notification.open(args);
-            multisend(wallet.networkId, wallet.address, wallet.web3, tokenAddress, decimals, receivers, amounts, new BigNumber(totalSend)).then(ret => {
-              console.log('multisend ret', ret);
+            multisend(wallet.networkId, wallet.address, wallet.web3, tokenAddress, decimals, receivers, amounts, new BigNumber(totalSend), setProgress).then(ret => {
               if (ret.success) {
                 args = {
                   message: 'Transactions sent success',
@@ -220,7 +218,7 @@ function BasicLayout(props) {
             }).catch(err => {
               args = {
                 message: 'Transactions sent failed',
-                description: err.toString(),
+                description: JSON.stringify(err, null, 2),
                 key,
                 duration: 0,
               };
@@ -229,6 +227,9 @@ function BasicLayout(props) {
             });
           }}>Start Send</Button>
         </ButtonLine>
+        {
+          progress !== undefined && loading && <Progress percent={progress} />
+        }
       </Body>
     </Background>
   );
@@ -249,6 +250,7 @@ const ButtonLine = styled.div`
   text-align: center;
   width: 100%;
   margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
 const Head = styled.div`
@@ -292,7 +294,7 @@ const Testnet = styled(WalletButton)`
 
 const H1 = styled.h1`
   color: white;
-  margin-top: 120px;
+  margin-top: 12vh;
   margin-left:auto;
   margin-right:auto;
   font-size: 40px;
