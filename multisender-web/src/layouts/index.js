@@ -32,7 +32,7 @@ function BasicLayout(props) {
 
       let ret;
       try {
-        if (isAddress(tokenAddress)) {
+        if (isAddress(tokenAddress) && !tokenAddresses[wallet.networkId.toString()].includes(tokenAddress)) {
           console.log('isAddress');
           ret = await getTokenInfo([...tokenAddresses[wallet.networkId.toString()], tokenAddress], wallet.networkId, wallet.address);
           console.log('ret', ret);
@@ -48,7 +48,7 @@ function BasicLayout(props) {
         return;
       }
 
-      if (isAddress(tokenAddress)) {
+      if (isAddress(tokenAddress) && !tokenAddresses[wallet.networkId.toString()].includes(tokenAddress)) {
         setBalance(commafy((new BigNumber(ret[tokenAddress].balance)).div(10 ** ret[tokenAddress].decimals)));
         setDecimals(ret[tokenAddress].decimals);
         setSymbol(ret[tokenAddress].symbol);
@@ -185,12 +185,12 @@ function BasicLayout(props) {
             }
 
             if (tokenAddress === WAN_TOKEN_ADDRESS) {
-              if ((new BigNumber(totalSend)).gt((new BigNumber(balance.split(',').join(''))).plus(0.1))) {
+              if ((new BigNumber(totalSend)).plus(0.1).gt((new BigNumber(tokensInfo[WAN_TOKEN_ADDRESS].balance)).div(1e18))) {
                 notification.open({ message: "Balance not enough" });
                 return;
               }
             } else {
-              if ((new BigNumber(totalSend)).gt(new BigNumber(balance.split(',').join('')))) {
+              if ((new BigNumber(totalSend)).gt((new BigNumber(tokensInfo[tokenAddress].balance)).div(10 ** tokensInfo[tokenAddress].decimals))) {
                 notification.open({ message: "Balance not enough" });
                 return;
               }
