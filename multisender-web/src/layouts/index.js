@@ -131,7 +131,7 @@ function BasicLayout(props) {
         }
       </Head>
       <H1>Welcome to MultiSender</H1>
-      <H2>We support send token in wallet to multi addresses on Wanchain Mainnet or Testnet.</H2>
+      <H2>This supports  sending native WAN and wanTokens (WRC20) from wallet to multiple addresses on Wanchain Mainnet or Testnet.</H2>
       <Body>
         <Text>Input or select token address:</Text>
         <span>
@@ -161,7 +161,7 @@ function BasicLayout(props) {
           Decimals:
           <span>{" " + decimals}</span>
         </DecimalBox>
-        <Text>Input or upload receive addresses in CSV format:</Text>
+        <Text>Input or upload recipient addresses in CSV format:</Text>
         <FileSelecton type="file" id="input" style={{ marginLeft: "10px" }} onChange={(e) => {
           let value = e.target.value;
           let files = e.target.files;
@@ -169,7 +169,7 @@ function BasicLayout(props) {
         }} />
         <STextArea rows={12} placeholder={
           `
-          You can past CSV string here, such as below:
+          You can paste multiple addresses here, such as below:
 
           0x4cF0a877e906deAd748a41Ae7da8C220e4247d9E,1.01
           0x5560Af0f46d00fcEa88627A9df7a4798B1B10961,2000
@@ -178,7 +178,7 @@ function BasicLayout(props) {
         } value={inputText} onChange={(e) => {
           setInputText(e.target.value);
         }} />
-        <Text>Your balance: {balance + ' ' + symbol}, Address count: {receivers.length}, Total send: {totalSend + ' ' + symbol}, Need tx count: {txCount} </Text>
+        <Text>Your balance: {balance + ' ' + symbol}, Receipent addresses: {receivers.length}, Total amount: {totalSend + ' ' + symbol} </Text>
         <ButtonLine>
           <SButton type="primary" loading={loading} icon={<SendOutlined />} disabled={txCount === 0} onClick={() => {
             if (!isAddress(tokenAddress)) {
@@ -240,7 +240,7 @@ function BasicLayout(props) {
               notification.open(args);
               setLoading(false);
             });
-          }}>Start Send</SButton>
+          }}>Send</SButton>
         </ButtonLine>
         {
           progress !== undefined && loading && <Progress percent={progress} />
@@ -254,7 +254,7 @@ export default BasicLayout;
 
 const Background = styled.div`
   background-image: url("background.png");
-  width: 100%;
+  min-width: 100%;
   min-height: 100%;
   background-size:100% 100%;
   color: white;
