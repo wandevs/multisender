@@ -5,3 +5,30 @@ html, body, #root {
 body {
   margin: 0;
 }
+
+.ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover, .ant-btn-primary[disabled]:focus, .ant-btn-primary[disabled]:active {
+  color: rgba(255, 255, 255, 1);
+  background: #0196df;
+  border: none;
+  text-shadow: none;
+  height: 40px;
+  width: 180px;
+  border-radius: 20px;
+}
+
+.ant-btn-primary {
+  color: rgba(255, 255, 255, 1);
+  background: #0196df;
+  border: none;
+  text-shadow: none;
+  height: 40px;
+  width: 180px;
+  border-radius: 20px;
+}
+
+textarea.ant-input {
+  border-radius: 15px;
+  background: transparent;
+  color: #0196df;
+  border: 1px solid #0196df;
+}

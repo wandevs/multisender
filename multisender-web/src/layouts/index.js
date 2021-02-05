@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Input, AutoComplete, InputNumber, Button, notification, Progress } from 'antd';
+
 import styled from 'styled-components';
 import Wallet from '../pages/components/Wallet';
-import { Input, AutoComplete, InputNumber, Button, notification, Progress } from 'antd';
 import { GithubOutlined, SendOutlined } from '@ant-design/icons';
 import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress, multisend } from '../utils';
 const BigNumber = require('bignumber.js');
+import FileSelecton from '../pages/components/FileSelection';
 
 const { TextArea } = Input;
 
@@ -160,7 +162,7 @@ function BasicLayout(props) {
           <span>{" " + decimals}</span>
         </DecimalBox>
         <Text>Input or upload receive addresses in CSV format:</Text>
-        <input type="file" id="input" style={{ marginLeft: "10px" }} onChange={(e) => {
+        <FileSelecton type="file" id="input" style={{ marginLeft: "10px" }} onChange={(e) => {
           let value = e.target.value;
           let files = e.target.files;
           setTimeout(() => { onUploadCheck(value, files) }, 1000);
@@ -178,7 +180,7 @@ function BasicLayout(props) {
         }} />
         <Text>Your balance: {balance + ' ' + symbol}, Address count: {receivers.length}, Total send: {totalSend + ' ' + symbol}, Need tx count: {txCount} </Text>
         <ButtonLine>
-          <Button type="primary" loading={loading} icon={<SendOutlined />} disabled={txCount === 0} onClick={() => {
+          <SButton type="primary" loading={loading} icon={<SendOutlined />} disabled={txCount === 0} onClick={() => {
             if (!isAddress(tokenAddress)) {
               notification.open({ message: "Please fill token address" });
               return;
@@ -238,7 +240,7 @@ function BasicLayout(props) {
               notification.open(args);
               setLoading(false);
             });
-          }}>Start Send</Button>
+          }}>Start Send</SButton>
         </ButtonLine>
         {
           progress !== undefined && loading && <Progress percent={progress} />
@@ -304,9 +306,8 @@ const Testnet = styled(WalletButton)`
   cursor: auto;
 `;
 
-
 const H1 = styled.h1`
-  color: white;
+  color: #02caed;
   margin-top: 12vh;
   margin-left:auto;
   margin-right:auto;
@@ -316,7 +317,7 @@ const H1 = styled.h1`
 `;
 
 const H2 = styled.div`
-  color: white;
+  color: #0196df;
   margin-top: 20px;
   margin-left:auto;
   margin-right:auto;
@@ -328,13 +329,14 @@ const H2 = styled.div`
 const Body = styled.div`
   background: #0053868a;
   width: 800px;
-  height: 600px;
+  height: 640px;
   margin-top: 20px;
   border-radius: 20px;
   margin-left:auto;
   margin-right:auto;
   padding: 20px;
   margin-bottom: 40px;
+  color: #0196df;
 `;
 
 const Text = styled.div`
@@ -362,4 +364,9 @@ const DecimalBox = styled.span`
 const STextArea = styled(TextArea)`
   margin: 10px;
   width: 97%;
+
+`;
+
+const SButton = styled(Button)`
+  margin-top: 20px;
 `;
