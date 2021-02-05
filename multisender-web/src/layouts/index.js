@@ -31,14 +31,27 @@ function BasicLayout(props) {
       }
 
       let ret;
-      if (isAddress(tokenAddress)) {
-        ret = await getTokenInfo([...tokenAddresses[wallet.networkId.toString()], tokenAddress], wallet.chainId, wallet.address);
-      } else {
-        ret = await getTokenInfo([...tokenAddresses[wallet.networkId.toString()]], wallet.networkId, wallet.address);
+      try {
+        if (isAddress(tokenAddress)) {
+          console.log('isAddress');
+          ret = await getTokenInfo([...tokenAddresses[wallet.networkId.toString()], tokenAddress], wallet.networkId, wallet.address);
+          console.log('ret', ret);
+        } else {
+          ret = await getTokenInfo([...tokenAddresses[wallet.networkId.toString()]], wallet.networkId, wallet.address);
+        }
+      } catch (err) {
+        console.log('error', err);
       }
+      
 
       if (!ret || ret.length === 0) {
         return;
+      }
+
+      if (isAddress(tokenAddress)) {
+        setBalance(commafy((new BigNumber(ret[tokenAddress].balance)).div(10 ** ret[tokenAddress].decimals)));
+        setDecimals(ret[tokenAddress].decimals);
+        setSymbol(ret[tokenAddress].symbol);
       }
 
       console.debug('tokens', ret);
@@ -47,12 +60,12 @@ function BasicLayout(props) {
       let options = tokenAddresses[wallet.networkId.toString()].map(v => {
         if (v === WAN_TOKEN_ADDRESS) {
           return {
-            label: 'WAN' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') ' + v,
+            label: 'WAN' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
             value: v
           };
         } else {
           return {
-            label: ret[v].symbol + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(10 ** ret[v].decimals)) + ') ' + v,
+            label: ret[v].symbol + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(10 ** ret[v].decimals)) + ') \t' + v,
             value: v
           };
         }
@@ -123,7 +136,7 @@ function BasicLayout(props) {
           <SAutoComplete
             value={tokenAddress}
             onChange={(e) => {
-              setTokenAddress(e);
+              setTokenAddress(e.toLowerCase());
               if (isAddress(e)) {
                 if (tokensInfo && tokensInfo[e]) {
                   if (e === WAN_TOKEN_ADDRESS) {
@@ -144,8 +157,8 @@ function BasicLayout(props) {
         </span>
         <DecimalBox>
           Decimals:
+          <span>{" " + decimals}</span>
         </DecimalBox>
-        <span><InputNumber value={decimals} readOnly /></span>
         <Text>Input or upload receive addresses in CSV format:</Text>
         <input type="file" id="input" style={{ marginLeft: "10px" }} onChange={(e) => {
           let value = e.target.value;
@@ -329,14 +342,16 @@ const Text = styled.div`
   margin: 10px;
 `;
 
-const TextInLine = styled.span`
-  font-size: 16px;
-  margin: 10px;
-`;
-
 const SAutoComplete = styled(AutoComplete)`
-  width: 70%;
+  width: 80%;
   margin: 10px;
+
+  div {
+    border-radius: 15px!important;
+    background: transparent!important;
+    color: white!important;
+    border: 1px solid #0196df!important;
+  }
 `;
 
 const DecimalBox = styled.span`

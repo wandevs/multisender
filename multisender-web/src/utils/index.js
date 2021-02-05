@@ -43,6 +43,7 @@ export const tokenAddresses = {
 export const WAN_TOKEN_ADDRESS = '0x000000000000000000000000000000000000beef';
 
 export const getTokenInfo = async (tokens, chainId, account) => {
+  console.debug('getTokenInfo', tokens, chainId, account);
   const config = {
     rpcUrl: RPC_URL[chainId],
     multicallAddress: MULTI_CALL_ADDR[chainId],
