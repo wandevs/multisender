@@ -39,7 +39,7 @@ class Wallet extends React.Component {
     this.web3Modal = new Web3Modal({
       network: 'mainnet',
       cacheProvider: true,
-      disableInjectedProvider: true,
+      disableInjectedProvider: false,
       providerOptions: this.getProviderOptions()
     });
   }

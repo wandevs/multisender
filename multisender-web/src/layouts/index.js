@@ -127,7 +127,7 @@ function BasicLayout(props) {
           }} />
         </GitHub>
         {
-          Number(wallet.networkId) !== 1 && <Testnet>Testnet</Testnet>
+          Number(wallet.networkId) !== 1 && Number(wallet.networkId) !== 888 && <Testnet>Testnet</Testnet>
         }
       </Head>
       <H1>Welcome to MultiSender</H1>
