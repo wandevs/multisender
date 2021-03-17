@@ -25,12 +25,15 @@ function BasicLayout(props) {
   const [amounts, setAmounts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState();
+  const [updateBalance, setUpdateBalance] = useState(0);
 
   useEffect(() => {
     const func = async () => {
       if (!wallet || !wallet.networkId || !tokenAddresses) {
         return;
       }
+
+      console.log('update info');
 
       let ret;
       try {
@@ -51,9 +54,27 @@ function BasicLayout(props) {
       }
 
       if (isAddress(tokenAddress) && !tokenAddresses[wallet.networkId.toString()].includes(tokenAddress)) {
+        console.log('set balance', commafy((new BigNumber(ret[tokenAddress].balance)).div(10 ** ret[tokenAddress].decimals)));
         setBalance(commafy((new BigNumber(ret[tokenAddress].balance)).div(10 ** ret[tokenAddress].decimals)));
         setDecimals(ret[tokenAddress].decimals);
         setSymbol(ret[tokenAddress].symbol);
+      }
+
+      let e = tokenAddress;
+
+      if (isAddress(e)) {
+        let tokensInfo = ret;
+        if (tokensInfo && tokensInfo[e]) {
+          if (e === WAN_TOKEN_ADDRESS) {
+            setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
+            setDecimals(18);
+            setSymbol('WAN');
+          } else {
+            setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
+            setDecimals(tokensInfo[e].decimals);
+            setSymbol(tokensInfo[e].symbol);
+          }
+        }
       }
 
       console.debug('tokens', ret);
@@ -76,6 +97,10 @@ function BasicLayout(props) {
       setTokenOptions(options);
     }
     func();
+    let timer = setInterval(func, 10000);
+    return ()=>{
+      clearInterval(timer);
+    }
   }, [wallet, tokenAddress]);
 
   useEffect(() => {
@@ -114,8 +139,8 @@ function BasicLayout(props) {
     <Background>
       <Wallet setWallet={setWallet} wallet={wallet} />
       <Head>
-        <img src={require('../../public/favicon.png')} style={{ marginTop: "-8px" }} width="40" />
-        <Title>MultiSender@Wanchain</Title>
+        {/* <img src={require('../../public/favicon.png')} style={{ marginTop: "-8px" }} width="40" />
+        <Title>MultiSender@Wanchain</Title> */}
 
         <WalletButton onClick={() => {
           wallet.resetApp().then(wallet.connect);
@@ -131,7 +156,8 @@ function BasicLayout(props) {
         }
       </Head>
       <H1>Welcome to MultiSender</H1>
-      <H2>This supports  sending native WAN and wanTokens (WRC20) from wallet to multiple addresses on Wanchain Mainnet or Testnet.</H2>
+      <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
+      <H3>Network supported: Wanchain Mainnet, Wanchain Testnet.</H3>
       <Body>
         <Text>Input or select token address:</Text>
         <span>
@@ -220,6 +246,7 @@ function BasicLayout(props) {
                   key,
                 };
                 notification.open(args);
+                setUpdateBalance(updateBalance+1);
               } else {
                 args = {
                   message: 'Transactions sent failed',
@@ -228,6 +255,7 @@ function BasicLayout(props) {
                   key,
                 };
                 notification.open(args);
+                setUpdateBalance(updateBalance+1);
               }
               setLoading(false);
             }).catch(err => {
@@ -239,6 +267,7 @@ function BasicLayout(props) {
               };
               notification.open(args);
               setLoading(false);
+              setUpdateBalance(updateBalance+1);
             });
           }}>Send</SButton>
         </ButtonLine>
@@ -253,11 +282,11 @@ function BasicLayout(props) {
 export default BasicLayout;
 
 const Background = styled.div`
-  background-image: url("background.png");
+  background-image: url("background.jpg");
   min-width: 100%;
   min-height: 100%;
   background-size:100% 100%;
-  color: white;
+  color: black;
   padding-bottom: 40px;
 `;
 
@@ -278,10 +307,11 @@ const GitHub = styled.span`
   font-size: 30px;
   padding-right: 20px;
   cursor: pointer;
+  color: black;
 `;
 
 const Title = styled.span`
-  color: #e0ebf1;
+  color: black;
   font-size: 20px;
   font-weight: 700;
   padding: 15px;
@@ -289,7 +319,8 @@ const Title = styled.span`
 
 const WalletButton = styled.span`
   border-radius: 15px;
-  background: #b50d58;
+  background: #dcdcdc;
+  color: black;
   height: 40px;
   width: 160px;
   padding: 8px;
@@ -300,14 +331,14 @@ const WalletButton = styled.span`
 `;
 
 const Testnet = styled(WalletButton)`
-  background: #d91271;
+  background: #e4e4e4;
   font-size: 16px;
   width: auto;
   cursor: auto;
 `;
 
 const H1 = styled.h1`
-  color: #02caed;
+  color: #555b5d;
   margin-top: 12vh;
   margin-left:auto;
   margin-right:auto;
@@ -317,7 +348,7 @@ const H1 = styled.h1`
 `;
 
 const H2 = styled.div`
-  color: #0196df;
+  color: #616161;
   margin-top: 20px;
   margin-left:auto;
   margin-right:auto;
@@ -326,8 +357,13 @@ const H2 = styled.div`
   text-align: center;
 `;
 
+const H3 = styled(H2)`
+  font-size: 16px;
+`;
+
 const Body = styled.div`
-  background: #0053868a;
+  background: white;
+  box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 14%) 0px 4px 8px, rgb(0 0 0 / 14%) 0px 16px 24px, rgb(0 0 0 / 10%) 0px 24px 32px;
   width: 800px;
   height: 640px;
   margin-top: 20px;
@@ -336,7 +372,7 @@ const Body = styled.div`
   margin-right:auto;
   padding: 20px;
   margin-bottom: 40px;
-  color: #0196df;
+  color: black;
 `;
 
 const Text = styled.div`
@@ -351,8 +387,8 @@ const SAutoComplete = styled(AutoComplete)`
   div {
     border-radius: 15px!important;
     background: transparent!important;
-    color: white!important;
-    border: 1px solid #0196df!important;
+    color: black!important;
+    border: 1px solid #c3c3c3!important;
   }
 `;
 

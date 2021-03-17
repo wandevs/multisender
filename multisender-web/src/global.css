@@ -7,8 +7,8 @@ body {
 }
 
 .ant-btn-primary[disabled], .ant-btn-primary[disabled]:hover, .ant-btn-primary[disabled]:focus, .ant-btn-primary[disabled]:active {
-  color: rgba(255, 255, 255, 1);
-  background: #0196df;
+  color: black;
+  background: #d2d2d2;
   border: none;
   text-shadow: none;
   height: 40px;
@@ -17,8 +17,8 @@ body {
 }
 
 .ant-btn-primary {
-  color: rgba(255, 255, 255, 1);
-  background: #0196df;
+  color: black;
+  background: #c3c3c3;
   border: none;
   text-shadow: none;
   height: 40px;
@@ -29,6 +29,6 @@ body {
 textarea.ant-input {
   border-radius: 15px;
   background: transparent;
-  color: #0196df;
-  border: 1px solid #0196df;
+  color: black;
+  border: 1px solid #c3c3c3;
 }
