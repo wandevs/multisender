@@ -34,29 +34,45 @@ class Wallet extends React.Component {
     if (typeof window === 'undefined') {
       return;
     }
-
-    console.debug('new web3modal');
-    this.web3Modal = new Web3Modal({
-      network: 'mainnet',
-      cacheProvider: true,
-      disableInjectedProvider: false,
-      providerOptions: this.getProviderOptions()
-    });
+    console.log('wallet init 1');
+    
   }
 
   componentDidMount() {
-    console.debug('web3Modal.cachedProvider', this.web3Modal.cachedProvider);
-    if (this.web3Modal.cachedProvider) {
-      if (this.web3Modal.cachedProvider === 'wanmask' && !window.wanchain) {
-        this.web3Modal.clearCachedProvider();
-        return;
-      }
-      this.onConnect();
-    }
+
   }
 
   onConnect = async () => {
-    const provider = await this.web3Modal.connect();
+    if (!this.web3Modal) {
+      console.debug('new web3modal');
+      this.web3Modal = new Web3Modal({
+        network: 'mainnet',
+        cacheProvider: true,
+        disableInjectedProvider: false,
+        providerOptions: this.getProviderOptions()
+      });
+
+      console.debug('web3Modal.cachedProvider', this.web3Modal.cachedProvider);
+      if (this.web3Modal.cachedProvider) {
+        if (this.web3Modal.cachedProvider === 'wanmask' && !window.wanchain) {
+          this.web3Modal.clearCachedProvider();
+          return;
+        }
+        this.onConnect();
+      }
+    }
+
+    let provider;
+    
+    try {
+      if (window.injectWeb3) {
+        provider = await this.web3Modal.connectTo('wanwallet');
+      } else {
+        provider = await this.web3Modal.connect();
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     await this.subscribeProvider(provider);
 
@@ -81,11 +97,6 @@ class Wallet extends React.Component {
   };
 
   subscribeProvider = async (provider) => {
-    let time = 20;
-    while (!provider && time-- > 0) {
-      await sleep(1000);
-    }
-
     if (!provider || !provider.on) {
       return;
     }
@@ -125,6 +136,10 @@ class Wallet extends React.Component {
   };
 
   resetApp = async () => {
+    if (!this.web3Modal) {
+      return;
+    }
+
     const { web3 } = this.props.wallet;
     if (web3 && web3.currentProvider && web3.currentProvider.close) {
       await web3.currentProvider.close();
