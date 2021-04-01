@@ -34,34 +34,28 @@ class Wallet extends React.Component {
     if (typeof window === 'undefined') {
       return;
     }
-    console.log('wallet init 1');
     
+    console.debug('new web3modal');
+    this.web3Modal = new Web3Modal({
+      network: 'mainnet',
+      cacheProvider: true,
+      disableInjectedProvider: false,
+      providerOptions: this.getProviderOptions()
+    });
   }
 
   componentDidMount() {
-
+    console.debug('web3Modal.cachedProvider', this.web3Modal.cachedProvider);
+    if (this.web3Modal.cachedProvider) {
+      if (this.web3Modal.cachedProvider === 'wanmask' && !window.wanchain) {
+        this.web3Modal.clearCachedProvider();
+        return;
+      }
+      this.onConnect();
+    }
   }
 
   onConnect = async () => {
-    if (!this.web3Modal) {
-      console.debug('new web3modal');
-      this.web3Modal = new Web3Modal({
-        network: 'mainnet',
-        cacheProvider: true,
-        disableInjectedProvider: false,
-        providerOptions: this.getProviderOptions()
-      });
-
-      console.debug('web3Modal.cachedProvider', this.web3Modal.cachedProvider);
-      if (this.web3Modal.cachedProvider) {
-        if (this.web3Modal.cachedProvider === 'wanmask' && !window.wanchain) {
-          this.web3Modal.clearCachedProvider();
-          return;
-        }
-        this.onConnect();
-      }
-    }
-
     let provider;
     
     try {
