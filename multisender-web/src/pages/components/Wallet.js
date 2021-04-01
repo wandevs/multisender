@@ -1,7 +1,7 @@
 import React from 'react'
 import Web3Modal from "@wandevs/web3modal";
 import { WanWalletConnector } from '@web3-react-wan/wanwallet-connector'
-
+import sleep from 'ko-sleep';
 import Web3 from "web3";
 
 const INITIAL_STATE = {
@@ -81,7 +81,12 @@ class Wallet extends React.Component {
   };
 
   subscribeProvider = async (provider) => {
-    if (!provider.on) {
+    let time = 20;
+    while (!provider && time-- > 0) {
+      await sleep(1000);
+    }
+
+    if (!provider || !provider.on) {
       return;
     }
     provider.on("close", () => this.resetApp());
