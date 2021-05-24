@@ -13,7 +13,7 @@ const { TextArea } = Input;
 function BasicLayout(props) {
   const [wallet, setWallet] = useState({});
   const [balance, setBalance] = useState(0);
-  const [symbol, setSymbol] = useState('WAN');
+  const [symbol, setSymbol] = useState('BNB');
   const [totalSend, setTotalSend] = useState('0');
   const [txCount, setTxCount] = useState(0);
   const [tokenOptions, setTokenOptions] = useState([]);
@@ -68,7 +68,7 @@ function BasicLayout(props) {
           if (e === WAN_TOKEN_ADDRESS) {
             setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
             setDecimals(18);
-            setSymbol('WAN');
+            setSymbol('BNB');
           } else {
             setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
             setDecimals(tokensInfo[e].decimals);
@@ -83,7 +83,7 @@ function BasicLayout(props) {
       let options = tokenAddresses[wallet.networkId.toString()].map(v => {
         if (v === WAN_TOKEN_ADDRESS) {
           return {
-            label: 'WAN' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
+            label: 'BNB' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
             value: v
           };
         } else {
@@ -152,7 +152,7 @@ function BasicLayout(props) {
           }} />
         </GitHub>
         {
-          Number(wallet.networkId) !== 1 && Number(wallet.networkId) !== 888 && <Testnet>Testnet</Testnet>
+          // Number(wallet.networkId) !== 1 && Number(wallet.networkId) !== 888 && <Testnet>Testnet</Testnet>
         }
       </Head>
       <H1>Welcome to MultiSender</H1>
@@ -170,7 +170,7 @@ function BasicLayout(props) {
                   if (e === WAN_TOKEN_ADDRESS) {
                     setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
                     setDecimals(18);
-                    setSymbol('WAN');
+                    setSymbol('BNB');
                   } else {
                     setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
                     setDecimals(tokensInfo[e].decimals);
