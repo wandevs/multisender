@@ -13,7 +13,7 @@ const { TextArea } = Input;
 function BasicLayout(props) {
   const [wallet, setWallet] = useState({});
   const [balance, setBalance] = useState(0);
-  const [symbol, setSymbol] = useState('BNB');
+  const [symbol, setSymbol] = useState('ETH');
   const [totalSend, setTotalSend] = useState('0');
   const [txCount, setTxCount] = useState(0);
   const [tokenOptions, setTokenOptions] = useState([]);
@@ -68,7 +68,7 @@ function BasicLayout(props) {
           if (e === WAN_TOKEN_ADDRESS) {
             setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
             setDecimals(18);
-            setSymbol('BNB');
+            setSymbol('ETH');
           } else {
             setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
             setDecimals(tokensInfo[e].decimals);
@@ -83,7 +83,7 @@ function BasicLayout(props) {
       let options = tokenAddresses[wallet.networkId.toString()].map(v => {
         if (v === WAN_TOKEN_ADDRESS) {
           return {
-            label: 'BNB' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
+            label: 'ETH' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
             value: v
           };
         } else {
@@ -170,7 +170,7 @@ function BasicLayout(props) {
                   if (e === WAN_TOKEN_ADDRESS) {
                     setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
                     setDecimals(18);
-                    setSymbol('BNB');
+                    setSymbol('ETH');
                   } else {
                     setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
                     setDecimals(tokensInfo[e].decimals);

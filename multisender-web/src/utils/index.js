@@ -4,17 +4,17 @@ const BigNumber = require('bignumber.js');
 const abi = require('../assets/UpgradebleStormSender.json').abi;
 
 const MULTI_CALL_ADDR = {
-  '56': '0x5bC813A8bF026E099eE8eC16fE6b178761e444d6',
+  '1': '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
 }
 
 const RPC_URL = {
-  '56': 'https://bsc-dataseed1.binance.org',
+  '1': 'https://mainnet.infura.io/v3/6b6aaec489854ba9bcf2c40666ca8176',
 }
 
-export const MULTISENDER_SC_ADDR = '0x9cF661e0D591e44F2458B45F37EB72c07b3a28c6';
+export const MULTISENDER_SC_ADDR = '0x3a471089DC0a91676b1dbd62Da7e49DAB6b94D00';
 
 export const tokenAddresses = {
-  '56': [
+  '1': [
     '0x000000000000000000000000000000000000beef',
   ],
 }
@@ -135,7 +135,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
       })
     }
 
-    let gas = 21000 + 50000 * subRecivers.length;
+    let gas = 200000 + 60000 * subRecivers.length;
     if (gas > 8e6) {
       gas = 8e6;
     }
