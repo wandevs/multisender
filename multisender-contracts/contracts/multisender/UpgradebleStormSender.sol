@@ -103,33 +103,33 @@ contract UpgradebleStormSender is OwnedUpgradeabilityStorage, Claimable {
         if (token == 0x000000000000000000000000000000000000bEEF){
             multisendEther(_contributors, _balances);
         } else {
-            uint256 total = 0;
+            // uint256 total = 0;
             require(_contributors.length <= arrayLimit());
             ERC20 erc20token = ERC20(token);
             uint8 i = 0;
             for (i; i < _contributors.length; i++) {
                 erc20token.transferFrom(msg.sender, _contributors[i], _balances[i]);
-                total += _balances[i];
+                // total += _balances[i];
             }
-            setTxCount(msg.sender, txCount(msg.sender).add(1));
-            Multisended(total, token);
+            // setTxCount(msg.sender, txCount(msg.sender).add(1));
+            // Multisended(total, token);
         }
     }
 
     function multisendEther(address[] _contributors, uint256[] _balances) public payable {
         uint256 total = msg.value;
-        uint256 fee = currentFee(msg.sender);
-        require(total >= fee);
+        // uint256 fee = currentFee(msg.sender);
+        // require(total >= fee);
         require(_contributors.length <= arrayLimit());
-        total = total.sub(fee);
+        // total = total.sub(fee);
         uint256 i = 0;
         for (i; i < _contributors.length; i++) {
             require(total >= _balances[i]);
             total = total.sub(_balances[i]);
             _contributors[i].transfer(_balances[i]);
         }
-        setTxCount(msg.sender, txCount(msg.sender).add(1));
-        Multisended(msg.value, 0x000000000000000000000000000000000000bEEF);
+        // setTxCount(msg.sender, txCount(msg.sender).add(1));
+        // Multisended(msg.value, 0x000000000000000000000000000000000000bEEF);
     }
 
     function claimTokens(address _token) public onlyOwner {

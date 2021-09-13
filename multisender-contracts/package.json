@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.3.1",
     "truffle": "^5.1.64",
     "wanchain-truffle-sdk": "^1.0.0",
     "web3-provider-engine": "^16.0.1"
