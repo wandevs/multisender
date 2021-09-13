@@ -5,18 +5,67 @@ const abi = require('../assets/UpgradebleStormSender.json').abi;
 
 const MULTI_CALL_ADDR = {
   '56': '0x5bC813A8bF026E099eE8eC16fE6b178761e444d6',
+  '97': '0x54b738619DE4770A17fF3D6bA4c2b591a886A062',
+  '128': '0xc9a9F768ebD123A00B52e7A0E590df2e9E998707',
+  '256': '0x01A4bFec8Cfd2580640fc6Bd0CB11461a6C804f1',
+  '888': '0xBa5934Ab3056fcA1Fa458D30FBB3810c3eb5145f',
+  '999': '0x14095a721Dddb892D6350a777c75396D634A7d97',
 }
 
 const RPC_URL = {
   '56': 'https://bsc-dataseed1.binance.org',
+  '97': 'https://data-seed-prebsc-2-s1.binance.org:8545',
+  '128': 'https://http-mainnet.hecochain.com',
+  '256': 'https://http-testnet.hecochain.com',
+  '888': 'https://gwan-ssl.wandevs.org:56891',
+  '999': 'https://gwan-ssl.wandevs.org:46891',
 }
 
-export const MULTISENDER_SC_ADDR = '0x9cF661e0D591e44F2458B45F37EB72c07b3a28c6';
+export const MULTISENDER_SC_ADDR = {
+  '56': '0xA394762fD500FD99630c82f2a4BE23dE6A43518E',
+  '97': '0x45463b2d973bd3304a2cAD1F9765b098eCe4aFCe',
+  '128': '0xB97506Dff5a262580C31fFA7870eC2eEd241104F',
+  '256': '0x5107033Dd55d70e8241534C6509697dcfB5c72F8',
+  '888': '0xBa28a368b05AF820968B795Ca045979f7F1e480e',
+  '999': '0x6B3c224c94afFe5600D4cBfD43dd77e37d5fc07A',
+}
 
 export const tokenAddresses = {
   '56': [
     '0x000000000000000000000000000000000000beef',
   ],
+  '97': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '128': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '256': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '888': [
+    '0x000000000000000000000000000000000000beef',
+    '0x6e11655d6aB3781C6613db8CB1Bc3deE9a7e111F',
+    '0xd15e200060fc17ef90546ad93c1c61bfefdc89c7',
+    '0x81862b7622ced0defb652addd4e0c110205b0040',
+    '0xc6f4465a6a521124c8e3096b62575c157999d361',
+    '0xdabd997ae5e4799be47d6e69d9431615cba28f48',
+    '0xe3ae74d1518a76715ab4c7bedf1af73893cd435a',
+    '0x06da85475f9d2ae79af300de474968cd5a4fde61',
+    '0x11e77e27af5539872efed10abaa0b408cfd9fbbd',
+    '0x52a9cea01c4cbdd669883e41758b8eb8e8e2b34b',
+    '0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a',
+    '0x73eaa7431b11b1e7a7d5310de470de09883529df',
+  ],
+  '999': [
+    '0x000000000000000000000000000000000000beef',
+    '0x07fdb4e8f8e420d021b9abeb2b1f6dce150ef77c',
+    '0x57195b9d12421e963b720020483f97bb7ff2e2a6',
+    '0x48344649b9611a891987b2db33faada3ac1d05ec',
+    '0x974ab46969d3d9a4569546051a797729e301d6eb',
+    '0x3d5950287b45f361774e5fb6e50d70eea06bc167',
+    '0x0a3b082c1ceda3d35e5bad2776c5a5236044a03d',
+  ]
 }
 
 export const WAN_TOKEN_ADDRESS = '0x000000000000000000000000000000000000beef';
@@ -69,7 +118,7 @@ export const getTokenInfo = async (tokens, chainId, account) => {
   calls = calls.concat(tokens.map(v => {
     return v !== WAN_TOKEN_ADDRESS && {
       target: v,
-      call: ['allowance(address,address)(uint256)', account, MULTISENDER_SC_ADDR],
+      call: ['allowance(address,address)(uint256)', account, MULTISENDER_SC_ADDR[chainId]],
       returns: [[v + '_allowance', val => val.toString()]]
     }
   }))
@@ -114,11 +163,11 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
   setProgress(0);
 
   if (tokenAddress !== WAN_TOKEN_ADDRESS) {
-    waitArray.push(await approve(MULTISENDER_SC_ADDR, tokenAddress, payAmount, from, web3));
+    waitArray.push(await approve(MULTISENDER_SC_ADDR[chainId], tokenAddress, payAmount, from, web3));
   }
 
-  const sc = new web3.eth.Contract(abi, MULTISENDER_SC_ADDR);
-  console.debug('multisend', payAmount, MULTISENDER_SC_ADDR);
+  const sc = new web3.eth.Contract(abi, MULTISENDER_SC_ADDR[chainId]);
+  console.debug('multisend', payAmount, MULTISENDER_SC_ADDR[chainId]);
 
 
   for (let i = 0; i < Math.ceil(receivers.length / 200); i++) {
@@ -143,7 +192,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
     let data = await sc.methods.multisendToken(tokenAddress, subRecivers, subAmounts).encodeABI();
   
     const params = {
-      to: MULTISENDER_SC_ADDR,
+      to: MULTISENDER_SC_ADDR[chainId],
       data,
       value: '0x' + value.toString(16),
       gasPrice: "0x2540BE400",

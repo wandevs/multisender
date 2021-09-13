@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Input, AutoComplete, InputNumber, Button, notification, Progress } from 'antd';
 
 import styled from 'styled-components';
@@ -13,7 +13,7 @@ const { TextArea } = Input;
 function BasicLayout(props) {
   const [wallet, setWallet] = useState({});
   const [balance, setBalance] = useState(0);
-  const [symbol, setSymbol] = useState('BNB');
+  const [symbol, setSymbol] = useState('NativeCoin');
   const [totalSend, setTotalSend] = useState('0');
   const [txCount, setTxCount] = useState(0);
   const [tokenOptions, setTokenOptions] = useState([]);
@@ -68,7 +68,7 @@ function BasicLayout(props) {
           if (e === WAN_TOKEN_ADDRESS) {
             setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
             setDecimals(18);
-            setSymbol('BNB');
+            setSymbol(nativeCoin);
           } else {
             setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
             setDecimals(tokensInfo[e].decimals);
@@ -83,7 +83,7 @@ function BasicLayout(props) {
       let options = tokenAddresses[wallet.networkId.toString()].map(v => {
         if (v === WAN_TOKEN_ADDRESS) {
           return {
-            label: 'BNB' + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
+            label: nativeCoin + ' (balance: ' + commafy((new BigNumber(ret[v].balance)).div(1e18)) + ') \t' + v,
             value: v
           };
         } else {
@@ -135,6 +135,24 @@ function BasicLayout(props) {
     }
   }
 
+  const chainId = wallet.networkId;
+  const nativeCoin = useMemo(()=>{
+    if (!chainId) {
+      return 'WAN';
+    }
+    switch(Number(chainId)) {
+      case 888:
+      case 999:
+        return 'WAN';
+      case 56:
+      case 97:
+        return 'BNB';
+      case 128:
+      case 256:
+        return 'HT';
+    }
+  }, [chainId]);
+
   return (
     <Background>
       <Wallet setWallet={setWallet} wallet={wallet} />
@@ -157,7 +175,7 @@ function BasicLayout(props) {
       </Head>
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
-      <H3>Network supported: Wanchain Mainnet, Wanchain Testnet.</H3>
+      <H3>Network supported: Wanchain Mainnet/Testnet, BSC Mainnet/Testnet, Heco Mainnet/Testnet</H3>
       <Body>
         <Text>Input or select token address:</Text>
         <span>
@@ -170,7 +188,7 @@ function BasicLayout(props) {
                   if (e === WAN_TOKEN_ADDRESS) {
                     setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(1e18)));
                     setDecimals(18);
-                    setSymbol('BNB');
+                    setSymbol(nativeCoin);
                   } else {
                     setBalance(commafy((new BigNumber(tokensInfo[e].balance)).div(10 ** tokensInfo[e].decimals)));
                     setDecimals(tokensInfo[e].decimals);
