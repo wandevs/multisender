@@ -150,6 +150,8 @@ function BasicLayout(props) {
       case 128:
       case 256:
         return 'HT';
+      case 1285:
+        return 'MOVR';
     }
   }, [chainId]);
 

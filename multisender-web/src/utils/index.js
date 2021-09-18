@@ -10,6 +10,7 @@ const MULTI_CALL_ADDR = {
   '256': '0x01A4bFec8Cfd2580640fc6Bd0CB11461a6C804f1',
   '888': '0xBa5934Ab3056fcA1Fa458D30FBB3810c3eb5145f',
   '999': '0x14095a721Dddb892D6350a777c75396D634A7d97',
+  '1285': '0x1Fe0C23940FcE7f440248e00Ce2a175977EE4B16',
 }
 
 const RPC_URL = {
@@ -19,6 +20,7 @@ const RPC_URL = {
   '256': 'https://http-testnet.hecochain.com',
   '888': 'https://gwan-ssl.wandevs.org:56891',
   '999': 'https://gwan-ssl.wandevs.org:46891',
+  '1285': 'https://rpc.moonriver.moonbeam.network',
 }
 
 export const MULTISENDER_SC_ADDR = {
@@ -28,6 +30,7 @@ export const MULTISENDER_SC_ADDR = {
   '256': '0x5107033Dd55d70e8241534C6509697dcfB5c72F8',
   '888': '0xBa28a368b05AF820968B795Ca045979f7F1e480e',
   '999': '0x6B3c224c94afFe5600D4cBfD43dd77e37d5fc07A',
+  '1285': '0xeC0D8Cfd081ccce2D6Ed4E3dd8f248D3cAa3d24B',
 }
 
 export const tokenAddresses = {
@@ -65,7 +68,10 @@ export const tokenAddresses = {
     '0x974ab46969d3d9a4569546051a797729e301d6eb',
     '0x3d5950287b45f361774e5fb6e50d70eea06bc167',
     '0x0a3b082c1ceda3d35e5bad2776c5a5236044a03d',
-  ]
+  ],
+  '1285': [
+    '0x000000000000000000000000000000000000beef',
+  ],
 }
 
 export const WAN_TOKEN_ADDRESS = '0x000000000000000000000000000000000000beef';
