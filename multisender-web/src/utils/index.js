@@ -191,7 +191,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
       })
     }
 
-    let gas = 21000 + 50000 * subRecivers.length;
+    let gas = 21000 + 80000 * subRecivers.length;
     if (gas > 8e6) {
       gas = 8e6;
     }
