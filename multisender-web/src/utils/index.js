@@ -71,6 +71,7 @@ export const tokenAddresses = {
   ],
   '1285': [
     '0x000000000000000000000000000000000000beef',
+    '0x9A92B5EBf1F6F6f7d93696FCD44e5Cf75035A756',
   ],
 }
 
