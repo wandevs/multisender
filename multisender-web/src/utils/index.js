@@ -11,6 +11,7 @@ const MULTI_CALL_ADDR = {
   '888': '0xBa5934Ab3056fcA1Fa458D30FBB3810c3eb5145f',
   '999': '0x14095a721Dddb892D6350a777c75396D634A7d97',
   '1285': '0x1Fe0C23940FcE7f440248e00Ce2a175977EE4B16',
+  '43114': '0xA4726706935901fe7dd0F23Cf5D4fb19867dfc88',
 }
 
 const RPC_URL = {
@@ -21,6 +22,7 @@ const RPC_URL = {
   '888': 'https://gwan-ssl.wandevs.org:56891',
   '999': 'https://gwan-ssl.wandevs.org:46891',
   '1285': 'https://rpc.moonriver.moonbeam.network',
+  '43114': 'https://api.avax.network/ext/bc/C/rpc',
 }
 
 export const MULTISENDER_SC_ADDR = {
@@ -31,6 +33,7 @@ export const MULTISENDER_SC_ADDR = {
   '888': '0xBa28a368b05AF820968B795Ca045979f7F1e480e',
   '999': '0x6B3c224c94afFe5600D4cBfD43dd77e37d5fc07A',
   '1285': '0xeC0D8Cfd081ccce2D6Ed4E3dd8f248D3cAa3d24B',
+  '43114': '0x3cc97934F6770b649ef27682c6b9369b073c1058'
 }
 
 export const tokenAddresses = {
@@ -72,6 +75,13 @@ export const tokenAddresses = {
   '1285': [
     '0x000000000000000000000000000000000000beef',
     '0x9A92B5EBf1F6F6f7d93696FCD44e5Cf75035A756',
+  ],
+  '43114': [
+    '0x000000000000000000000000000000000000beef',
+    '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', //USDC
+    '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', //USDT
+    '0xc7198437980c041c805A1EDcbA50c1Ce5db95118', //USDT.e
+    '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664', //USDC.e
   ],
 }
 

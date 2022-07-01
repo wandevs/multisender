@@ -152,6 +152,8 @@ function BasicLayout(props) {
         return 'HT';
       case 1285:
         return 'MOVR';
+      case 43114:
+        return 'AVAX';
     }
   }, [chainId]);
 
@@ -177,7 +179,7 @@ function BasicLayout(props) {
       </Head>
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
-      <H3>Network supported: Wanchain Mainnet/Testnet, BSC Mainnet/Testnet, Heco Mainnet/Testnet, Moonriver</H3>
+      <H3>Network supported: Wanchain Mainnet/Testnet, BSC Mainnet/Testnet, Heco Mainnet/Testnet, Moonriver, Avalanche</H3>
       <Body>
         <Text>Input or select token address:</Text>
         <span>
