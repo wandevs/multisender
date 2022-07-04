@@ -324,6 +324,7 @@ function BasicLayout(props) {
                 }} />
                 in {nativeCoin}
             </Space>
+            <i style={{marginLeft:"20px"}}>* The minimum total amount is 0.01 {nativeCoin}</i>
            
             <Space>
               <Text>Input Total Envelope Count: </Text>
@@ -335,6 +336,8 @@ function BasicLayout(props) {
                   setRedCount(e);
                 }} />
             </Space>
+            <i style={{marginLeft:"20px"}}>* The minimum amount in each envelope is 0.001 {nativeCoin}</i>
+
             <SButton loading={loading} type="primary" onClick={async ()=>{
               setLoading(true);
               try {
