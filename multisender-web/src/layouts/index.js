@@ -179,7 +179,7 @@ function BasicLayout(props) {
       </Head>
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
-      <H3>Network supported: Wanchain, BSC, Heco, Moonriver, Avalanche</H3>
+      <H3>Network supported: Wanchain, BSC, Heco, Moonriver, Avalanche - C chain</H3>
       <Body>
         <Text>Input or select token address:</Text>
         <span>
