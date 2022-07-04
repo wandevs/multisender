@@ -2,6 +2,7 @@ const { aggregate } = require('@makerdao/multicall');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
 const abi = require('../assets/UpgradebleStormSender.json').abi;
+const RED_ABI = require('../assets/RedEnvelope.json');
 
 const MULTI_CALL_ADDR = {
   '56': '0x5bC813A8bF026E099eE8eC16fE6b178761e444d6',
@@ -83,6 +84,12 @@ export const tokenAddresses = {
     '0xc7198437980c041c805A1EDcbA50c1Ce5db95118', //USDT.e
     '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664', //USDC.e
   ],
+}
+
+export const RED_ENVELOPE_SC_ADDR = {
+  '888': '0xA9CfeB7b02F1718EF9a0F5C2Ab4ADa3e3466DD4c',
+  '999': '0xfD1A3256A7ab5451eeF2554133cE9B521C44920C',
+  '43114': '0x10acBE3b9E6A2Ff7f341e5cbF4b6617741fF44aa',
 }
 
 export const WAN_TOKEN_ADDRESS = '0x000000000000000000000000000000000000beef';
@@ -330,4 +337,19 @@ export const isAddress = function (address) {
   }
 
   return false;
+}
+
+export const packRedEnvelope = async (chainId, from, web3, amount, count) => {
+  let sc = new web3.eth.Contract(RED_ABI, RED_ENVELOPE_SC_ADDR[chainId]);
+  let _amount = '0x' + (new BigNumber(amount)).multipliedBy(10 ** 18).toString(16).split('.')[0];
+  let ret = await sc.methods.pack(count).send({from, value: _amount});
+  console.log('ret', ret);
+  return ret;
+}
+
+export const claimRedEnvelope = async (chainId, from, web3, id) => {
+  let sc = new web3.eth.Contract(RED_ABI, RED_ENVELOPE_SC_ADDR[chainId]);
+  let ret = await sc.methods.claim(id).send({from});
+  console.log('ret', ret);
+  return ret;
 }

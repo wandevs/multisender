@@ -1,0 +1,166 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "_id",
+				"type": "bytes32"
+			}
+		],
+		"name": "claim",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "id",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_leftCount",
+				"type": "uint256"
+			}
+		],
+		"name": "Claim",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_count",
+				"type": "uint256"
+			}
+		],
+		"name": "pack",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "id",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_sender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_count",
+				"type": "uint256"
+			}
+		],
+		"name": "Pack",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "claimedCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "leftAmount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "nonce",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "packCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

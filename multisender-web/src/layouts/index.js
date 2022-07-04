@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Input, AutoComplete, InputNumber, Button, notification, Progress } from 'antd';
-
+import { Input, AutoComplete, InputNumber, Button, notification, Progress, Tabs, Space, Divider } from 'antd';
 import styled from 'styled-components';
 import Wallet from '../pages/components/Wallet';
 import { GithubOutlined, SendOutlined } from '@ant-design/icons';
-import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress, multisend } from '../utils';
+import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress, multisend, packRedEnvelope, claimRedEnvelope } from '../utils';
 const BigNumber = require('bignumber.js');
 import FileSelecton from '../pages/components/FileSelection';
 
 const { TextArea } = Input;
+const { TabPane } = Tabs;
 
 function BasicLayout(props) {
   const [wallet, setWallet] = useState({});
@@ -157,6 +157,11 @@ function BasicLayout(props) {
     }
   }, [chainId]);
 
+  const [redAmount, setRedAmount] = useState('5');
+  const [redCount, setRedCount] = useState('10');
+  const [redId, setRedId] = useState('');
+  const [disableClaim, setDisableClaim] = useState(false);
+
   return (
     <Background>
       <Wallet setWallet={setWallet} wallet={wallet} />
@@ -180,7 +185,10 @@ function BasicLayout(props) {
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
       <H3>Network supported: Wanchain, BSC, Heco, Moonriver, Avalanche - C chain</H3>
+      
       <Body>
+      <Tabs defaultActiveKey={window.location.href.includes('/claim/') ? '2' : '1'}>
+        <TabPane tab="MultiSender" key="1">
         <Text>Input or select token address:</Text>
         <span>
           <SAutoComplete
@@ -296,6 +304,101 @@ function BasicLayout(props) {
         {
           progress !== undefined && loading && <Progress percent={progress} />
         }
+        </TabPane>
+        {
+          <TabPane tab="Red Envelope" key="2">
+            {
+              ![888, 999, 43114].includes(Number(wallet.networkId)) && <Text>This network not support red envelope, now. please try wanchain / avalanche-c</Text>
+            }
+            {
+              [888, 999, 43114].includes(Number(wallet.networkId)) && <div>
+            {
+            !window.location.href.includes('/claim/') && <Space direction="vertical" style={{width:'100%', padding: '30px'}}>
+            <Space>
+              <Text>Input Total Amount: </Text>
+              <InputNumber
+                width={200}
+                value={redAmount}
+                onChange={(e) => {
+                  setRedAmount(e);
+                }} />
+                in {nativeCoin}
+            </Space>
+           
+            <Space>
+              <Text>Input Total Envelope Count: </Text>
+              <InputNumber
+                width={200}
+
+                value={redCount}
+                onChange={(e) => {
+                  setRedCount(e);
+                }} />
+            </Space>
+            <SButton loading={loading} type="primary" onClick={async ()=>{
+              setLoading(true);
+              try {
+                let ret = await packRedEnvelope(wallet.networkId, wallet.address, wallet.web3, redAmount, redCount);
+                if (ret.status) {
+                  let args = {
+                    message: 'Red envelope sent success',
+                    description: 'Claim URL: ' + window.location.href + 'claim/' + ret.events.Pack.returnValues.id,
+                    key:'redEnvelope' + Date.now(),
+                    duration: 0,
+                  };
+                  notification.open(args);
+                  setRedId(ret.events.Pack.returnValues.id);
+                }
+              } catch (err) {
+                console.error(err);
+              } finally {
+                setLoading(false);
+              }
+            }}>Send to Pack</SButton>
+            <p></p>
+            {
+              redId && <Text>Claim URL: </Text>
+            }
+            {
+              redId && <Input defaultValue={window.location.href + 'claim/' + redId} />
+            }
+          </Space>
+          }
+          {
+            window.location.href.includes('/claim/') && <Space style={{width:'100%'}} direction="vertical">
+              <Text>Red Envelope ID: </Text>
+              <Input readOnly defaultValue={window.location.href.split('/claim/')[1]} />
+              <SButton disabled={disableClaim} loading={loading} type="primary" onClick={async ()=>{
+                setLoading(true);
+                try {
+                  let ret = await claimRedEnvelope(wallet.networkId, wallet.address, wallet.web3, window.location.href.split('/claim/')[1]);
+                  if (ret.status) {
+                    let args = {
+                      message: 'Red envelope claimed success',
+                      description: 'You claimed: ' + Number(wallet.web3.utils.fromWei(ret.events.Claim.returnValues._amount)).toFixed(4) + ' ' + nativeCoin + '\n\n Left count: ' + ret.events.Claim.returnValues._leftCount,
+                      key:'redEnvelope' + Date.now(),
+                      duration: 0,
+                    };
+                    notification.open(args);
+                    setDisableClaim(true);
+                  }
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setLoading(false);
+                }
+              }}>Claim</SButton>
+            </Space>
+          }
+              </div>
+            }
+          
+          
+        </TabPane>
+        }
+        
+      </Tabs>
+        
       </Body>
     </Background>
   );
@@ -387,7 +490,7 @@ const Body = styled.div`
   background: white;
   box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 14%) 0px 4px 8px, rgb(0 0 0 / 14%) 0px 16px 24px, rgb(0 0 0 / 10%) 0px 24px 32px;
   width: 800px;
-  height: 640px;
+  height: 700px;
   margin-top: 20px;
   border-radius: 20px;
   margin-left:auto;
