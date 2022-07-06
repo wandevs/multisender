@@ -1,0 +1,17 @@
+{
+  "short_name": "MultiSender",
+  "name": "MultiSender",
+  "description": "Send your assets to multiple addresses at once",
+  "iconPath": "favicon.png",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "160x160"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
