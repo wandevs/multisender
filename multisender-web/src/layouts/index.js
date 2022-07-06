@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Input, AutoComplete, InputNumber, Button, notification, Progress, Tabs, Space, Divider } from 'antd';
+import { Input, AutoComplete, InputNumber, Button, notification, Progress, Tabs, Space, Divider, Tag } from 'antd';
 import styled from 'styled-components';
 import Wallet from '../pages/components/Wallet';
 import { GithubOutlined, SendOutlined } from '@ant-design/icons';
 import { tokenAddresses, getTokenInfo, commafy, WAN_TOKEN_ADDRESS, isAddress, multisend, packRedEnvelope, claimRedEnvelope } from '../utils';
-const BigNumber = require('bignumber.js');
 import FileSelecton from '../pages/components/FileSelection';
+const BigNumber = require('bignumber.js');
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -184,7 +184,23 @@ function BasicLayout(props) {
       </Head>
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
-      <H3>Network supported: Wanchain, BSC, Heco, Moonriver, Avalanche - C chain</H3>
+      <H3>Network supported: &nbsp;&nbsp;
+      <Space>
+        <Tag color="cyan">Wanchain</Tag>
+        <Tag color="blue">BSC</Tag>
+        <Tag color="geekblue">Heco</Tag>
+        <Tag color="purple">Moonriver</Tag>
+        <Tag color="red">Avalanche - C Chain</Tag>
+      </Space>
+      </H3>
+      <H3>Wallet supported: &nbsp;&nbsp;
+      <Space>
+        <Tag color="volcano">MetaMask</Tag>
+        <Tag color="gold">WanMask</Tag>
+        <Tag color="lime">Gnosis Safe</Tag>
+      </Space>
+      </H3>
+      
       
       <Body>
       <Tabs defaultActiveKey={window.location.href.includes('/claim/') ? '2' : '1'}>
@@ -243,7 +259,7 @@ function BasicLayout(props) {
             }
 
             if (tokenAddress === WAN_TOKEN_ADDRESS) {
-              if ((new BigNumber(totalSend)).plus(0.1).gt((new BigNumber(tokensInfo[WAN_TOKEN_ADDRESS].balance)).div(1e18))) {
+              if ((new BigNumber(totalSend)).gt((new BigNumber(tokensInfo[WAN_TOKEN_ADDRESS].balance)).div(1e18))) {
                 notification.open({ message: "Balance not enough" });
                 return;
               }

@@ -1,5 +1,6 @@
 import React from 'react'
-import Web3Modal from "@wandevs/web3modal";
+// import Web3Modal from "@wandevs/web3modal";
+import { SafeAppWeb3Modal } from '@wandevs/safe-apps-web3modal';
 import { WanWalletConnector } from '@web3-react-wan/wanwallet-connector'
 import sleep from 'ko-sleep';
 import Web3 from "web3";
@@ -36,7 +37,7 @@ class Wallet extends React.Component {
     }
     
     console.debug('new web3modal');
-    this.web3Modal = new Web3Modal({
+    this.web3Modal = new SafeAppWeb3Modal({
       network: 'mainnet',
       cacheProvider: true,
       disableInjectedProvider: false,
@@ -62,10 +63,17 @@ class Wallet extends React.Component {
       if (window.injectWeb3) {
         provider = await this.web3Modal.connectTo('wanwallet');
       } else {
-        provider = await this.web3Modal.connect();
+        provider = await this.web3Modal.requestProvider();
+        if (!provider) {
+          provider = await this.web3Modal.connect();
+        }
       }
     } catch (error) {
       console.error(error);
+    }
+
+    if (!provider) {
+      return;
     }
 
     await this.subscribeProvider(provider);
