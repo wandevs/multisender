@@ -110,10 +110,12 @@ function BasicLayout(props) {
     let _amounts = [];
     if (lines.length > 0) {
       for (let i = 0; i < lines.length; i++) {
-        if (lines[i].split(',').length === 2 && isAddress(lines[i].split(',')[0]) && !isNaN(lines[i].split(',')[1])) {
+        if (lines[i].split(',').length === 2 && isAddress(lines[i].split(',')[0].trim()) && !isNaN(lines[i].split(',')[1])) {
           tmpTotal = tmpTotal.plus(new BigNumber(lines[i].split(',')[1]));
-          _receivers.push(lines[i].split(',')[0].toLowerCase());
+          _receivers.push(lines[i].split(',')[0].toLowerCase().trim());
           _amounts.push(new BigNumber(lines[i].split(',')[1]));
+        } else {
+          console.log('bad line', lines[i]);
         }
       }
 
