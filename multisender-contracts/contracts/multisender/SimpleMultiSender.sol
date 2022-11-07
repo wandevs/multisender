@@ -10,7 +10,7 @@ contract SimpleMultiSender {
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
 
-    uint public constant LIMIT = 200;
+    uint public constant LIMIT = 7000;
 
     event Multisended(uint256 total, address tokenAddress);
     event ClaimedTokens(address token, address owner, uint256 balance);
@@ -26,9 +26,7 @@ contract SimpleMultiSender {
             ERC20 erc20token = ERC20(token);
             uint8 i = 0;
             for (i; i < _contributors.length; i++) {
-                if (!Address.isContract(_contributors[i])) {
-                    erc20token.transferFrom(msg.sender, _contributors[i], _balances[i]);
-                }
+                erc20token.transferFrom(msg.sender, _contributors[i], _balances[i]);
             }
         }
     }
