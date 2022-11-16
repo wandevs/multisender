@@ -189,6 +189,7 @@ function BasicLayout(props) {
       <H3>Network supported: &nbsp;&nbsp;
       <Space>
         <Tag color="cyan">Wanchain</Tag>
+        <Tag color="red">Ethereum</Tag>
         <Tag color="blue">BSC</Tag>
         <Tag color="geekblue">Heco</Tag>
         <Tag color="purple">Moonriver</Tag>
