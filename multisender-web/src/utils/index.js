@@ -355,6 +355,12 @@ export const packRedEnvelope = async (chainId, from, web3, amount, count) => {
 
 export const claimRedEnvelope = async (chainId, from, web3, id) => {
   let sc = new web3.eth.Contract(RED_ABI, RED_ENVELOPE_SC_ADDR[chainId]);
+  try {
+    await sc.methods.claim(id).estimateGas({from});
+  } catch (e) {
+    console.error(e);
+    return { status: false };
+  }
   let ret = await sc.methods.claim(id).send({from});
   console.log('ret', ret);
   return ret;

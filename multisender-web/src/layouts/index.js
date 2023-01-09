@@ -403,6 +403,14 @@ function BasicLayout(props) {
                     };
                     notification.open(args);
                     setDisableClaim(true);
+                  } else {
+                    let args = {
+                      message: 'All packets had been claimed',
+                      description: 'All packets had been claimed, so please do not claim now!',
+                      key:'redEnvelope' + Date.now(),
+                      duration: 0,
+                    };
+                    notification.open(args);
                   }
                 } catch (err) {
                   console.error(err);
