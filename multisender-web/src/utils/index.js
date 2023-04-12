@@ -213,6 +213,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
         value = value.plus(new BigNumber(v));
       })
     }
+    console.log('value', value.toString());
 
     let gas = 21000 + 80000 * subRecivers.length;
     if (gas > 8e6) {

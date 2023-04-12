@@ -186,6 +186,7 @@ function BasicLayout(props) {
       </Head>
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
+      <H2>* The recipient address does not support smart contract or exchange addresses. *</H2>
       <H3>Network supported: &nbsp;&nbsp;
       <Space>
         <Tag color="cyan">Wanchain</Tag>
