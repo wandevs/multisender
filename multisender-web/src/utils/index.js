@@ -5,39 +5,57 @@ const abi = require('../assets/UpgradebleStormSender.json').abi;
 const RED_ABI = require('../assets/RedEnvelope.json');
 
 const MULTI_CALL_ADDR = {
+  '10': '0x2dc0e2aa608532da689e89e237df582b783e552c',
   '56': '0x5bC813A8bF026E099eE8eC16fE6b178761e444d6',
   '97': '0x54b738619DE4770A17fF3D6bA4c2b591a886A062',
   '128': '0xc9a9F768ebD123A00B52e7A0E590df2e9E998707',
+  '137': '0x1bbc16260d5d052f1493b8f2aeee7888fed1e9ab',
   '256': '0x01A4bFec8Cfd2580640fc6Bd0CB11461a6C804f1',
   '888': '0xBa5934Ab3056fcA1Fa458D30FBB3810c3eb5145f',
   '999': '0x14095a721Dddb892D6350a777c75396D634A7d97',
   '1285': '0x1Fe0C23940FcE7f440248e00Ce2a175977EE4B16',
+  '8453': '0xBe5187C2A7eb776c1CaEeD2C37E7599fb05000D3',
   '43114': '0xA4726706935901fe7dd0F23Cf5D4fb19867dfc88',
+  '42161': '0xb66f96e30d6a0ae64d24e392bb2dbd25155cb3a6',
+  '16180': '0xD4B5f10D61916Bd6E0860144a91Ac658dE8a1437',
 }
 
 const RPC_URL = {
-  '56': 'https://bsc-dataseed1.binance.org',
+  '10': 'https://optimism-rpc.publicnode.com',
+  '56': 'https://bsc-rpc.publicnode.com',
   '97': 'https://data-seed-prebsc-2-s1.binance.org:8545',
   '128': 'https://http-mainnet.hecochain.com',
+  '137': 'https://polygon.llamarpc.com',
   '256': 'https://http-testnet.hecochain.com',
   '888': 'https://gwan-ssl.wandevs.org:56891',
   '999': 'https://gwan-ssl.wandevs.org:46891',
   '1285': 'https://rpc.moonriver.moonbeam.network',
+  '8453': 'https://base-rpc.publicnode.com',
   '43114': 'https://api.avax.network/ext/bc/C/rpc',
+  '42161': 'https://arbitrum-one-rpc.publicnode.com',
+  '16180': 'https://subnets.avax.network/plyr/mainnet/rpc',
 }
 
 export const MULTISENDER_SC_ADDR = {
+  '10': '0x1E7e46945e50BBe7dF7014C086b642E6B7B4a625',
   '56': '0xA394762fD500FD99630c82f2a4BE23dE6A43518E',
   '97': '0x45463b2d973bd3304a2cAD1F9765b098eCe4aFCe',
   '128': '0xB97506Dff5a262580C31fFA7870eC2eEd241104F',
+  '137': '0xBdC15C6D12f89C0D2f49f336eBD17EC5ed3B785b',
   '256': '0x5107033Dd55d70e8241534C6509697dcfB5c72F8',
   '888': '0xBa28a368b05AF820968B795Ca045979f7F1e480e',
   '999': '0x6B3c224c94afFe5600D4cBfD43dd77e37d5fc07A',
   '1285': '0xeC0D8Cfd081ccce2D6Ed4E3dd8f248D3cAa3d24B',
-  '43114': '0x3cc97934F6770b649ef27682c6b9369b073c1058'
+  '8453': '0x0E57DB96f34Aaa743a3f77e8Fc0B17641ca9F1DF',
+  '43114': '0x3cc97934F6770b649ef27682c6b9369b073c1058',
+  '42161': '0xE0cF5A329B861FE83814844D2382d0AA483A5e01',
+  '16180': '0xA1626dD558B11e6FE9d490D81A3af69c1Fb98383',
 }
 
 export const tokenAddresses = {
+  '10': [
+    '0x000000000000000000000000000000000000beef',
+  ],
   '56': [
     '0x000000000000000000000000000000000000beef',
   ],
@@ -45,6 +63,9 @@ export const tokenAddresses = {
     '0x000000000000000000000000000000000000beef',
   ],
   '128': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '137': [
     '0x000000000000000000000000000000000000beef',
   ],
   '256': [
@@ -84,6 +105,15 @@ export const tokenAddresses = {
     '0xc7198437980c041c805A1EDcbA50c1Ce5db95118', //USDT.e
     '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664', //USDC.e
   ],
+  '16180': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '42161': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '8453': [
+    '0x000000000000000000000000000000000000beef',
+  ]
 }
 
 export const RED_ENVELOPE_SC_ADDR = {

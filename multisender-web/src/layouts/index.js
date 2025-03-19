@@ -33,7 +33,7 @@ function BasicLayout(props) {
         return;
       }
 
-      console.log('update info');
+      console.log('update info', tokenAddresses, wallet.networkId.toString());
 
       let ret;
       try {
@@ -156,6 +156,16 @@ function BasicLayout(props) {
         return 'MOVR';
       case 43114:
         return 'AVAX';
+      case 16180:
+        return 'PLYR';
+      case 10:
+        return 'ETH';
+      case 137:
+        return 'POL';
+      case 8453:
+        return 'ETH';
+      case 42161:
+        return 'ETH';
     }
   }, [chainId]);
 
@@ -193,6 +203,11 @@ function BasicLayout(props) {
         <Tag color="geekblue">Heco</Tag>
         <Tag color="purple">Moonriver</Tag>
         <Tag color="red">Avalanche - C Chain</Tag>
+        <Tag color="blue">PLYR PHI</Tag>
+        <Tag color="blue">Base</Tag>
+        <Tag color="blue">Arbitrum One</Tag>
+        <Tag color="blue">OP</Tag>
+        <Tag color="blue">Polygon</Tag>
       </Space>
       </H3>
       <H3>Wallet supported: &nbsp;&nbsp;
@@ -271,7 +286,7 @@ function BasicLayout(props) {
                 return;
               }
 
-              if (!(new BigNumber(tokensInfo[WAN_TOKEN_ADDRESS].balance)).div(1e18).gt(new BigNumber(0.01))) {
+              if (!(new BigNumber(tokensInfo[WAN_TOKEN_ADDRESS].balance)).div(1e18).gt(new BigNumber(0.000001))) {
                 notification.open({ message: "Gas fee not enough" });
                 return;
               }

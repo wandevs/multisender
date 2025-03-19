@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "start": "umi dev",
-    "build": "umi build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider umi dev",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider umi build",
     "test": "umi test",
     "lint": "eslint {src,mock,tests}/**/*.{js,jsx} --fix",
     "precommit": "lint-staged"
