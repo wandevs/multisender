@@ -196,9 +196,11 @@ function BasicLayout(props) {
       </Head>
       <H1>Welcome to MultiSender</H1>
       <H2>This supports sending native coin and tokens from wallet to multiple addresses.</H2>
+      <H2>* The recipient address does not support smart contract or exchange addresses. *</H2>
       <H3>Network supported: &nbsp;&nbsp;
       <Space>
         <Tag color="cyan">Wanchain</Tag>
+        <Tag color="red">Ethereum</Tag>
         <Tag color="blue">BSC</Tag>
         <Tag color="geekblue">Heco</Tag>
         <Tag color="purple">Moonriver</Tag>
@@ -417,6 +419,14 @@ function BasicLayout(props) {
                     };
                     notification.open(args);
                     setDisableClaim(true);
+                  } else {
+                    let args = {
+                      message: 'All packets had been claimed',
+                      description: 'All packets had been claimed, so please do not claim now!',
+                      key:'redEnvelope' + Date.now(),
+                      duration: 0,
+                    };
+                    notification.open(args);
                   }
                 } catch (err) {
                   console.error(err);

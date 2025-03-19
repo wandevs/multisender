@@ -6,6 +6,7 @@ const RED_ABI = require('../assets/RedEnvelope.json');
 
 const MULTI_CALL_ADDR = {
   '10': '0x2dc0e2aa608532da689e89e237df582b783e552c',
+  '1': '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
   '56': '0x5bC813A8bF026E099eE8eC16fE6b178761e444d6',
   '97': '0x54b738619DE4770A17fF3D6bA4c2b591a886A062',
   '128': '0xc9a9F768ebD123A00B52e7A0E590df2e9E998707',
@@ -23,6 +24,7 @@ const MULTI_CALL_ADDR = {
 const RPC_URL = {
   '10': 'https://optimism-rpc.publicnode.com',
   '56': 'https://bsc-rpc.publicnode.com',
+  '1': 'https://eth-mainnet.g.alchemy.com/v2/av6Rt3CWjV-VwkYH_PnmE67uYeJC5vk6',
   '97': 'https://data-seed-prebsc-2-s1.binance.org:8545',
   '128': 'https://http-mainnet.hecochain.com',
   '137': 'https://polygon.llamarpc.com',
@@ -38,12 +40,13 @@ const RPC_URL = {
 
 export const MULTISENDER_SC_ADDR = {
   '10': '0x1E7e46945e50BBe7dF7014C086b642E6B7B4a625',
+  '1': '0x49a313673D4354DDc596e9B2131964FBfcd872b0',
   '56': '0xA394762fD500FD99630c82f2a4BE23dE6A43518E',
   '97': '0x45463b2d973bd3304a2cAD1F9765b098eCe4aFCe',
   '128': '0xB97506Dff5a262580C31fFA7870eC2eEd241104F',
   '137': '0xBdC15C6D12f89C0D2f49f336eBD17EC5ed3B785b',
   '256': '0x5107033Dd55d70e8241534C6509697dcfB5c72F8',
-  '888': '0xBa28a368b05AF820968B795Ca045979f7F1e480e',
+  '888': '0x4ec32e74185131E3861ab3dd3c1F66439Df2C838',
   '999': '0x6B3c224c94afFe5600D4cBfD43dd77e37d5fc07A',
   '1285': '0xeC0D8Cfd081ccce2D6Ed4E3dd8f248D3cAa3d24B',
   '8453': '0x0E57DB96f34Aaa743a3f77e8Fc0B17641ca9F1DF',
@@ -54,6 +57,9 @@ export const MULTISENDER_SC_ADDR = {
 
 export const tokenAddresses = {
   '10': [
+    '0x000000000000000000000000000000000000beef',
+  ],
+  '1': [
     '0x000000000000000000000000000000000000beef',
   ],
   '56': [
@@ -237,6 +243,7 @@ export const multisend = async (chainId, from, web3, tokenAddress, decimals, rec
         value = value.plus(new BigNumber(v));
       })
     }
+    console.log('value', value.toString());
 
     let gas = 21000 + 80000 * subRecivers.length;
     if (gas > 8e6) {
@@ -379,6 +386,12 @@ export const packRedEnvelope = async (chainId, from, web3, amount, count) => {
 
 export const claimRedEnvelope = async (chainId, from, web3, id) => {
   let sc = new web3.eth.Contract(RED_ABI, RED_ENVELOPE_SC_ADDR[chainId]);
+  try {
+    await sc.methods.claim(id).estimateGas({from});
+  } catch (e) {
+    console.error(e);
+    return { status: false };
+  }
   let ret = await sc.methods.claim(id).send({from});
   console.log('ret', ret);
   return ret;
