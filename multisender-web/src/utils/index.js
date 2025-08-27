@@ -24,10 +24,10 @@ const MULTI_CALL_ADDR = {
 const RPC_URL = {
   '10': 'https://optimism-rpc.publicnode.com',
   '56': 'https://bsc-rpc.publicnode.com',
-  '1': 'https://eth-mainnet.g.alchemy.com/v2/av6Rt3CWjV-VwkYH_PnmE67uYeJC5vk6',
+  '1': 'https://ethereum-rpc.publicnode.com',
   '97': 'https://data-seed-prebsc-2-s1.binance.org:8545',
   '128': 'https://http-mainnet.hecochain.com',
-  '137': 'https://polygon.llamarpc.com',
+  '137': 'https://polygon-bor-rpc.publicnode.com',
   '256': 'https://http-testnet.hecochain.com',
   '888': 'https://gwan-ssl.wandevs.org:56891',
   '999': 'https://gwan-ssl.wandevs.org:46891',
@@ -73,6 +73,7 @@ export const tokenAddresses = {
   ],
   '137': [
     '0x000000000000000000000000000000000000beef',
+    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
   ],
   '256': [
     '0x000000000000000000000000000000000000beef',
